@@ -2,6 +2,10 @@
 name = "ccadb-csv"
 version = "0.1.0"
 edition = "2021"
+license = "MPL-2.0"
+description = "Thin wrappers around Common CA Database (CCADB) CSV report content."
+repository = "https://github.com/cpu/ccadb-utils"
+keywords = ["ccadb", "pki", "tls"]
 
 [dependencies]
 csv = "1.2.1"

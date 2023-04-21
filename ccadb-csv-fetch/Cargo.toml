@@ -2,6 +2,10 @@
 name = "ccadb-csv-fetch"
 version = "0.1.0"
 edition = "2021"
+license = "MPL-2.0"
+description = "Utility for downloading CSV reports from the Common CA Database (CCADB)."
+repository = "https://github.com/cpu/ccadb-utils"
+keywords = ["ccadb", "pki", "tls"]
 
 [dependencies]
 ureq = { version = "2.6.2", default-features = false, features = [ "tls", "rustls" ] }
