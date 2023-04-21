@@ -1,0 +1,11 @@
+[package]
+name = "ccadb-csv-fetch"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ureq = { version = "2.6.2", default-features = false, features = [ "tls", "rustls" ] }
+rustls = "0.20.8"
+rustls-webpki = "0.100.1"
+indicatif = "0.17.3"
+ccadb-csv = { path = "../ccadb-csv" }

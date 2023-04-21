@@ -1,0 +1,10 @@
+# Compilation artifacts.
+/target
+# IDE settings.
+/.idea
+# Nix Flake (TBD: Consider inclusion)
+/flake.nix
+/flake.lock
+# Local data.
+/testdata/*.csv
+/crls

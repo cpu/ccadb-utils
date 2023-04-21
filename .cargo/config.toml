@@ -1,0 +1,4 @@
+[alias]
+fetch-included-roots = "run --package ccadb-csv-fetch -- mozilla-included-roots testdata/IncludedCACertificateReportPEMCSV.csv"
+fetch-all-records = "run --package ccadb-csv-fetch -- all-cert-records testdata/AllCertificateRecordsCSVFormat.csv"
+fetch-crls = "run --package ccadb-crl-fetch -- testdata/AllCertificateRecordsCSVFormat.csv"
