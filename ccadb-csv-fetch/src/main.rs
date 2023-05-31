@@ -43,10 +43,15 @@ fn download(report_type: ReportType, output_path: impl AsRef<Path>) -> Result<()
     );
 
     let start_time = time::Instant::now();
+    let output_path = output_path.as_ref();
     pb.set_message(format!("Downloading {} ...", report_type.url()));
     fetch_report(&report_type, output_path).map(|_| ())?;
     let elapsed = start_time.elapsed().as_secs();
-    pb.finish_with_message(format!("Downloaded {} in {elapsed}s", report_type.url()));
+    let output_path = output_path.display();
+    pb.finish_with_message(format!(
+        "Downloaded {} to {output_path} in {elapsed}s",
+        report_type.url()
+    ));
 
     Ok(())
 }
