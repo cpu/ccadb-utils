@@ -24,6 +24,12 @@ Utility for downloading CCADB CSV metadata reports for local processing. Hardcod
 certificate required to access CCADB such that the tool can bootstrap a root store based on the CSV content without
 itself needing a full root store.
 
+### ccadb-webpki-roots
+
+Utility for converting the CCADB `IncludedCACertificateReportPEMCSV.csv` report into a Rust file holding the set of
+Mozilla TLS trust anchors in `webpki` compatible format. This tool can be used to generate an updated `webpki-roots`
+library.
+
 ## ccadb-crl-fetch
 
 Utility for best-effort mass-downloading all Mozilla included, non-revoked, issuer CRLs (full and partitioned) 
@@ -34,4 +40,3 @@ and CRL URLs that are broken, so some errors are to be expected.
 
 * GitHub actions, better unit test coverage.
 * Better handling of retries and HTTPS->HTTP protocol downgrade for CRL downloads.
-* Webpki roots generation.
