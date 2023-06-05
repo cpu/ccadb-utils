@@ -39,6 +39,9 @@ pub enum ProcessingError {
     /// Certificate metadata contained a serial number that could not be recognized.
     InvalidSerial { source: InvalidSerialError },
     #[non_exhaustive]
+    /// Certificate metadata contained a SHA256 fingerprint that could not be recognized.
+    InvalidFP { fp: String },
+    #[non_exhaustive]
     /// Certificate metadata PEM contained a root certificate that could not be parsed.
     InvalidRoot { source: CertParseError },
     #[non_exhaustive]
@@ -77,6 +80,9 @@ impl fmt::Display for ProcessingError {
             }
             ProcessingError::InvalidSerial { source } => {
                 write!(f, "invalid serial: {source}")
+            }
+            ProcessingError::InvalidFP { fp } => {
+                write!(f, "invalid SHA256 fingerprint: {fp:?}")
             }
             ProcessingError::InvalidDate { date, source } => {
                 write!(f, "invalid date: {date:?}: {source}")
