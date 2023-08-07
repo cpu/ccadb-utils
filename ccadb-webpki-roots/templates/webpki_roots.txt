@@ -36,7 +36,9 @@ pub static TLS_SERVER_ROOTS: webpki::TlsServerTrustAnchors = webpki::TlsServerTr
    webpki::TrustAnchor {
      subject: &{{ root.subject_der }},
      spki: &{{ root.spki }},
-     name_constraints: None
+     name_constraints: {%- match root.name_constraints %}
+       {%- when None %} None {%- when Some(der) %} Some(&{{ der }})
+     {%- endmatch %}
    },
 {% endfor %}
 

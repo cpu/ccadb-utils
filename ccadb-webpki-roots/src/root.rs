@@ -3,6 +3,7 @@ use chrono::NaiveDate;
 use num_bigint::BigUint;
 use std::collections::HashSet;
 use std::io::BufReader;
+use yasna::Tag;
 
 use super::Result;
 use crate::error::{InvalidSerialError, ProcessingError};
@@ -118,6 +119,50 @@ impl RootCertificate {
             }
         }
     }
+
+    pub fn mozilla_applied_constraints(&self) -> Option<Vec<u8>> {
+        if self.0.mozilla_applied_constraints.is_empty() {
+            return None;
+        }
+
+        // NOTE: To date there's only one CA with applied constraints, and it has only one constraint
+        // imposed. It's not clear how multiple constraints would be expressed. This method takes a
+        // best guess but will likely need to be revisited in the future.
+        let included_subtrees = self.0.mozilla_applied_constraints.split(',');
+        let der = yasna::construct_der(|writer| {
+            // OCTET STRING
+            writer.write_tagged(Tag::context(0), |writer| {
+                // NameConstraints ::= SEQUENCE
+                writer.write_sequence(|writer| {
+                    // permittedSubtrees [0]
+                    writer
+                        .next()
+                        .write_tagged_implicit(Tag::context(0), |writer| {
+                            // GeneralSubtrees
+                            writer.write_sequence(|writer| {
+                                for included_subtree in included_subtrees {
+                                    // base GeneralName
+                                    writer.next().write_sequence(|writer| {
+                                        writer
+                                            .next()
+                                            // DnsName
+                                            .write_tagged_implicit(Tag::context(2), |writer| {
+                                                writer.write_ia5_string(
+                                                    included_subtree.trim_start_matches('*'),
+                                                )
+                                            })
+                                    })
+                                    // minimum [0] (absent, 0 default)
+                                    // maximum [1] (must be omitted).
+                                }
+                            })
+                        })
+                })
+            })
+        });
+
+        Some(der)
+    }
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone, Copy)]
@@ -180,7 +225,7 @@ pub(crate) mod tests {
             test_website_valid: "https://example.com/fake_valid".to_string(),
             test_website_expired: "https://example.com/fake_expired".to_string(),
             test_website_revoked: "https://example.com/fake_revoked".to_string(),
-            mozilla_applied_constraints: "".to_string(),
+            mozilla_applied_constraints: "*.tr".to_string(),
             company_website: "https://binaryparadox.net".to_string(),
             geographic_focus: "Canada".to_string(),
             certificate_policy_cp: "https://example.com/pretend_cp".to_string(),
@@ -417,5 +462,14 @@ pub(crate) mod tests {
             TrustBits::try_from(bitstr),
             Ok(TrustBits::Websites)
         ));
+    }
+
+    #[test]
+    fn test_moz_applied_constraints() {
+        let eg_root = RootCertificate(test_metadata());
+        let expected = Some(vec![
+            0xA0, 0x0b, 0x30, 0x09, 0xA0, 0x07, 0x30, 0x05, 0x82, 0x03, 0x2E, 0x74, 0x72,
+        ]);
+        assert_eq!(eg_root.mozilla_applied_constraints(), expected);
     }
 }

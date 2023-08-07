@@ -45,7 +45,8 @@ pub(crate) struct WebpkiRoot {
     pub(crate) subject_der: Der,
     /// DER encoded trust anchor subject public key information bytes.
     pub(crate) spki: Der,
-    // TODO(XXX): name_constraints,
+    /// DER encoded name constraints extension.
+    pub(crate) name_constraints: Option<Der>,
 }
 
 impl PartialEq for WebpkiRoot {
@@ -83,6 +84,7 @@ impl TryFrom<RootCertificate> for WebpkiRoot {
         let pem = root.pem().to_string();
         let subject_der = Der(trust_anchor.subject.to_vec());
         let spki = Der(trust_anchor.spki.to_vec());
+        let name_constraints = root.mozilla_applied_constraints().map(|der| Der(der));
 
         Ok(WebpkiRoot {
             issuer,
@@ -93,6 +95,7 @@ impl TryFrom<RootCertificate> for WebpkiRoot {
             pem,
             subject_der,
             spki,
+            name_constraints,
         })
     }
 }
@@ -114,6 +117,7 @@ mod tests {
             pem: "corge".to_owned(),
             subject_der: Der(vec![]),
             spki: Der(vec![]),
+            name_constraints: None,
         }
     }
 
