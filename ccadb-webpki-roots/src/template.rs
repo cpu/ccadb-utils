@@ -57,7 +57,7 @@ impl PartialEq for WebpkiRoot {
 
 impl PartialOrd for WebpkiRoot {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.sha256_fp.partial_cmp(&other.sha256_fp)
+        Some(self.cmp(other))
     }
 }
 
@@ -84,7 +84,7 @@ impl TryFrom<RootCertificate> for WebpkiRoot {
         let pem = root.pem().to_string();
         let subject_der = Der(trust_anchor.subject.to_vec());
         let spki = Der(trust_anchor.spki.to_vec());
-        let name_constraints = root.mozilla_applied_constraints().map(|der| Der(der));
+        let name_constraints = root.mozilla_applied_constraints().map(Der);
 
         Ok(WebpkiRoot {
             issuer,

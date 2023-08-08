@@ -94,7 +94,7 @@ impl RootCertificate {
         // not including the root since an empty set of trust bits won't contain TrustBits::Website.
         let has_tls_trust_bit = self
             .trust_bits()
-            .unwrap_or(HashSet::default())
+            .unwrap_or_default()
             .contains(&TrustBits::Websites);
 
         // If we can't parse the tls_distrust_after date, assume it's epoch. E.g. fail closed
