@@ -130,33 +130,24 @@ impl RootCertificate {
         // best guess but will likely need to be revisited in the future.
         let included_subtrees = self.0.mozilla_applied_constraints.split(',');
         let der = yasna::construct_der(|writer| {
-            // OCTET STRING
-            writer.write_tagged(Tag::context(0), |writer| {
-                // NameConstraints ::= SEQUENCE
+            // permittedSubtrees [0]
+            writer.write_tagged_implicit(Tag::context(0), |writer| {
+                // GeneralSubtrees
                 writer.write_sequence(|writer| {
-                    // permittedSubtrees [0]
-                    writer
-                        .next()
-                        .write_tagged_implicit(Tag::context(0), |writer| {
-                            // GeneralSubtrees
-                            writer.write_sequence(|writer| {
-                                for included_subtree in included_subtrees {
-                                    // base GeneralName
-                                    writer.next().write_sequence(|writer| {
-                                        writer
-                                            .next()
-                                            // DnsName
-                                            .write_tagged_implicit(Tag::context(2), |writer| {
-                                                writer.write_ia5_string(
-                                                    included_subtree.trim_start_matches('*'),
-                                                )
-                                            })
-                                    })
-                                    // minimum [0] (absent, 0 default)
-                                    // maximum [1] (must be omitted).
-                                }
-                            })
+                    for included_subtree in included_subtrees {
+                        // base GeneralName
+                        writer.next().write_sequence(|writer| {
+                            writer
+                                .next()
+                                // DnsName
+                                .write_tagged_implicit(Tag::context(2), |writer| {
+                                    writer
+                                        .write_ia5_string(included_subtree.trim_start_matches('*'))
+                                })
                         })
+                        // minimum [0] (absent, 0 default)
+                        // maximum [1] (must be omitted).
+                    }
                 })
             })
         });
@@ -467,9 +458,7 @@ pub(crate) mod tests {
     #[test]
     fn test_moz_applied_constraints() {
         let eg_root = RootCertificate(test_metadata());
-        let expected = Some(vec![
-            0xA0, 0x0b, 0x30, 0x09, 0xA0, 0x07, 0x30, 0x05, 0x82, 0x03, 0x2E, 0x74, 0x72,
-        ]);
+        let expected = Some(vec![0xA0, 0x07, 0x30, 0x05, 0x82, 0x03, 0x2E, 0x74, 0x72]);
         assert_eq!(eg_root.mozilla_applied_constraints(), expected);
     }
 }
