@@ -4,5 +4,4 @@ members = [
     "ccadb-csv",
     "ccadb-csv-fetch",
     "ccadb-crl-fetch",
-    "ccadb-webpki-roots",
 ]
