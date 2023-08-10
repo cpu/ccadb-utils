@@ -171,7 +171,7 @@ fn tls_config() -> rustls::ClientConfig {
             anchor.name_constraints,
         ),
     ];
-    root_store.add_server_trust_anchors(anchors.into_iter());
+    root_store.add_trust_anchors(anchors.into_iter());
 
     rustls::ClientConfig::builder()
         .with_safe_default_cipher_suites()
