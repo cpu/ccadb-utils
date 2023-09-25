@@ -11,5 +11,5 @@ keywords = ["ccadb", "pki", "tls"]
 ureq = { version = "2.6.2", default-features = false, features = [ "tls", "rustls" ] }
 rustls = "0.21.7"
 rustls-webpki = "0.101.5"
-indicatif = "0.17.6"
+indicatif = "0.17.7"
 ccadb-csv = { path = "../ccadb-csv", version = "0.1.0"}
