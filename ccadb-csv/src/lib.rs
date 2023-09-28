@@ -180,6 +180,16 @@ pub mod all_cert_records {
         pub full_crl_issued_by_this_ca: String,
         #[serde(rename = "JSON Array of Partitioned CRLs")]
         pub json_array_of_partitioned_crls: String,
+        #[serde(rename = "Valid From (GMT)")]
+        pub valid_from_gmt: String,
+        #[serde(rename = "Valid To (GMT)")]
+        pub valid_to_gmt: String,
+        #[serde(rename = "Chrome Status")]
+        pub chrome_status: String,
+        #[serde(rename = "Derived Trust Bits")]
+        pub derived_trust_bits: String,
+        #[serde(rename = "Status of Root Cert")]
+        pub status_of_root_cert: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
@@ -423,6 +433,11 @@ mod tests {
             subordinate_ca_owner: "".to_string(),
             full_crl_issued_by_this_ca: "".to_string(),
             json_array_of_partitioned_crls: "[\"http://crl.digicert.eu/DigiCertQuoVadisG3QualifiedBEitsmeRSA4096SHA2562023CA1.crl\"]".to_string(),
+            valid_from_gmt: "2023.03.14".to_string(),
+            valid_to_gmt: "2032.03.11".to_string(),
+            chrome_status: "Not Included".to_string(),
+            derived_trust_bits: "Client Authentication;Secure Email;Document Signing".to_string(),
+            status_of_root_cert: "Apple: Included; Google Chrome: Included; Microsoft: Included; Mozilla: Included".to_string(),
         };
 
         let first = records.first().unwrap();
