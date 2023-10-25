@@ -9,7 +9,7 @@ keywords = ["ccadb", "pki", "tls"]
 
 [dependencies]
 ureq = { version = "2.8.0", default-features = false, features = [ "tls", "rustls" ] }
-rustls = "0.21.7"
+rustls = "0.21.8"
 rustls-webpki = "0.101.7"
 indicatif = "0.17.7"
 ccadb-csv = { path = "../ccadb-csv", version = "0.2.0"}
