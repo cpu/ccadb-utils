@@ -11,7 +11,7 @@ keywords = ["ccadb", "pki", "tls", "crls", "revocation"]
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tokio = { version = "1.36.0", features = ["rt-multi-thread", "macros", "fs"] }
-tokio-stream = "0.1.12"
+tokio-stream = "0.1.15"
 futures-util = "0.3.30"
 reqwest = { version = "0.11.24", default-features = false, features = ["rustls", "trust-dns"] }
 url = "2.5.0"
