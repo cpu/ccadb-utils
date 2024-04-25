@@ -1,6 +1,6 @@
 # Rust CCADB Utilities
 
-**WORK IN PROGRESS**
+**Status: Rough Prototype**
 
 A collection of Rust crates useful for fetching and processing CSV data from [Common CA Database] (CCADB)
 reports. These reports offer metadata about root and intermediate certificate authorities that have been disclosed
