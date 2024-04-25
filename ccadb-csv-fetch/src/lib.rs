@@ -159,25 +159,17 @@ fn read_csv_url(url: &str) -> Result<Take<Box<dyn Read + Send + Sync>>> {
     Ok(resp.into_reader().take(READ_LIMIT))
 }
 
-// builds a TLS ClientConfig that has only root trusted root certificate, the vendored
+// builds a TLS ClientConfig that has only one trust anchor, the vendored
 // CCADB_API_ROOT.
 fn tls_config() -> rustls::ClientConfig {
-    let mut root_store = rustls::RootCertStore::empty();
-    let anchor = webpki::TrustAnchor::try_from_cert_der(CCADB_API_ROOT).unwrap();
-    let anchors = vec![
-        rustls::OwnedTrustAnchor::from_subject_spki_name_constraints(
-            anchor.subject,
-            anchor.spki,
-            anchor.name_constraints,
-        ),
-    ];
-    root_store.add_trust_anchors(anchors.into_iter());
-
-    rustls::ClientConfig::builder()
-        .with_safe_default_cipher_suites()
-        .with_safe_default_kx_groups()
-        .with_safe_default_protocol_versions()
+    let anchor_der = rustls::pki_types::CertificateDer::from(CCADB_API_ROOT);
+    let anchor = webpki::anchor_from_trusted_cert(&anchor_der)
         .unwrap()
+        .to_owned();
+    let root_store = rustls::RootCertStore {
+        roots: vec![anchor].into_iter().collect(),
+    };
+    rustls::ClientConfig::builder()
         .with_root_certificates(root_store)
         .with_no_client_auth()
 }
