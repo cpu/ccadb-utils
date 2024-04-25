@@ -12,4 +12,4 @@ ureq = { version = "2.9", default-features = false, features = [ "tls" ] }
 rustls = "0.22"
 rustls-webpki = "0.102"
 indicatif = "0.17"
-ccadb-csv = { path = "../ccadb-csv", version = "0.2"}
+ccadb-csv = { path = "../ccadb-csv", version = "0.3"}

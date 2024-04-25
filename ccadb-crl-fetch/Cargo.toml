@@ -17,5 +17,5 @@ reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"
 url = "2"
 serde_json = "1"
 indicatif = "0.17"
-ccadb-csv = { path = "../ccadb-csv", version = "0.2"}
+ccadb-csv = { path = "../ccadb-csv", version = "0.3"}
 

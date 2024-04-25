@@ -190,6 +190,8 @@ pub mod all_cert_records {
         pub derived_trust_bits: String,
         #[serde(rename = "Status of Root Cert")]
         pub status_of_root_cert: String,
+        #[serde(rename = "Country")]
+        pub country: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
@@ -438,6 +440,7 @@ mod tests {
             chrome_status: "Not Included".to_string(),
             derived_trust_bits: "Client Authentication;Secure Email;Document Signing".to_string(),
             status_of_root_cert: "Apple: Included; Google Chrome: Included; Microsoft: Included; Mozilla: Included".to_string(),
+            country: "Bermuda".to_string(),
         };
 
         let first = records.first().unwrap();
