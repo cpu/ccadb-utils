@@ -1,7 +1,7 @@
 [workspace]
-
 members = [
     "ccadb-csv",
     "ccadb-csv-fetch",
     "ccadb-crl-fetch",
 ]
+resolver = "2"
