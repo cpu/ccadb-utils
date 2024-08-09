@@ -18,13 +18,13 @@
 #![warn(clippy::pedantic)]
 
 use std::error::Error;
-use std::fmt;
 use std::io::Read;
+use std::{fmt, result};
 
 use serde::Deserialize;
 
 /// Convenience type for functions that return a `T` on success or a [`DataSourceError`] otherwise.
-pub type Result<T> = core::result::Result<T, DataSourceError>;
+pub type Result<T> = result::Result<T, DataSourceError>;
 
 #[derive(Debug)]
 #[non_exhaustive]
@@ -55,21 +55,10 @@ impl Error for DataSourceError {
 
 impl From<csv::Error> for DataSourceError {
     fn from(source: csv::Error) -> Self {
-        let source = Box::new(source);
-        DataSourceError::Csv { source }
+        DataSourceError::Csv {
+            source: Box::new(source),
+        }
     }
-}
-
-// read the provided data as CSV with a header line, producing an iterator over the
-// deserialized records.
-fn csv_metadata_iter<T: for<'a> Deserialize<'a>>(
-    data: impl Read,
-) -> impl Iterator<Item=Result<T>> {
-    csv::ReaderBuilder::new()
-        .has_headers(true)
-        .from_reader(data)
-        .into_deserialize::<T>()
-        .map(|r| r.map_err(Into::into))
 }
 
 /// Module for processing the CCADB "all certificate records version 2" CSV report.
@@ -81,9 +70,11 @@ fn csv_metadata_iter<T: for<'a> Deserialize<'a>>(
 /// If you are interested strictly in root certificates that are included in the Mozilla root
 /// program, prefer the [`mozilla_included_roots`] module.
 pub mod all_cert_records {
-    use crate::{csv_metadata_iter, Result};
-    use serde::Deserialize;
     use std::io::Read;
+
+    use serde::Deserialize;
+
+    use super::{csv_metadata_iter, Result};
 
     /// URL for the CCADB all certificate records version 2 CSV report.
     pub const URL: &str =
@@ -96,124 +87,184 @@ pub mod all_cert_records {
     pub struct CertificateMetadata {
         #[serde(rename = "CA Owner")]
         pub ca_owner: String,
+
         #[serde(rename = "Salesforce Record ID")]
         pub salesforce_record_id: String,
+
         #[serde(rename = "Certificate Name")]
         pub certificate_name: String,
+
         #[serde(rename = "Parent Salesforce Record ID")]
         pub parent_salesforce_record_id: String,
+
         #[serde(rename = "Parent Certificate Name")]
         pub parent_certificate_name: String,
+
         #[serde(rename = "Certificate Record Type")]
         pub certificate_record_type: String,
+
         #[serde(rename = "Revocation Status")]
         pub revocation_status: String,
+
         #[serde(rename = "SHA-256 Fingerprint")]
         pub sha256_fingerprint: String,
+
         #[serde(rename = "Parent SHA-256 Fingerprint")]
         pub parent_sha256_fingerprint: String,
+
         #[serde(rename = "Audits Same as Parent?")]
         pub audits_same_as_parent: String,
+
         #[serde(rename = "Auditor")]
         pub auditor: String,
+
         #[serde(rename = "Standard Audit URL")]
         pub standard_audit_url: String,
+
         #[serde(rename = "Standard Audit Type")]
         pub standard_audit_type: String,
+
         #[serde(rename = "Standard Audit Statement Date")]
         pub standard_audit_statement_date: String,
+
         #[serde(rename = "Standard Audit Period Start Date")]
         pub standard_audit_period_start_date: String,
+
         #[serde(rename = "Standard Audit Period End Date")]
         pub standard_audit_period_end_date: String,
+
         #[serde(rename = "NetSec Audit URL")]
         pub netsec_audit_url: String,
+
         #[serde(rename = "NetSec Audit Type")]
         pub netsec_audit_type: String,
+
         #[serde(rename = "NetSec Audit Statement Date")]
         pub netsec_audit_statement_date: String,
+
         #[serde(rename = "NetSec Audit Period Start Date")]
         pub netsec_audit_period_start_date: String,
+
         #[serde(rename = "NetSec Audit Period End Date")]
         pub netsec_audit_period_end_date: String,
+
         #[serde(rename = "TLS BR Audit URL")]
         pub tls_br_audit_url: String,
+
         #[serde(rename = "TLS BR Audit Type")]
         pub tls_br_audit_type: String,
+
         #[serde(rename = "TLS BR Audit Statement Date")]
         pub tls_br_audit_statement_date: String,
+
         #[serde(rename = "TLS BR Audit Period Start Date")]
         pub tls_br_audit_period_start_date: String,
+
         #[serde(rename = "TLS BR Audit Period End Date")]
         pub tls_br_audit_period_end_date: String,
+
         #[serde(rename = "TLS EVG Audit URL")]
         pub tls_evg_audit_url: String,
+
         #[serde(rename = "TLS EVG Audit Type")]
         pub tls_evg_audit_type: String,
+
         #[serde(rename = "TLS EVG Audit Statement Date")]
         pub tls_evg_audit_statement_date: String,
+
         #[serde(rename = "TLS EVG Audit Period Start Date")]
         pub tls_evg_audit_period_start_date: String,
+
         #[serde(rename = "TLS EVG Audit Period End Date")]
         pub tls_evg_audit_period_end_date: String,
+
         #[serde(rename = "Code Signing Audit URL")]
         pub code_signing_audit_url: String,
+
         #[serde(rename = "Code Signing Audit Type")]
         pub code_signing_audit_type: String,
+
         #[serde(rename = "Code Signing Audit Statement Date")]
         pub code_signing_audit_statement_date: String,
+
         #[serde(rename = "Code Signing Audit Period Start Date")]
         pub code_signing_audit_period_start_date: String,
+
         #[serde(rename = "Code Signing Audit Period End Date")]
         pub code_signing_audit_period_end_date: String,
+
         #[serde(rename = "CP/CPS Same as Parent?")]
         pub cp_cps_same_as_parent: String,
+
         #[serde(rename = "Certificate Policy (CP) URL")]
         pub certificate_policy_url: String,
+
         #[serde(rename = "Certificate Practice Statement (CPS) URL")]
         pub certificate_practice_statement_cps_url: String,
+
         #[serde(rename = "CP/CPS Last Updated Date")]
         pub cp_cps_last_updated_date: String,
+
         #[serde(rename = "Test Website URL - Valid")]
         pub test_website_url_valid: String,
+
         #[serde(rename = "Test Website URL - Expired")]
         pub test_website_url_expired: String,
+
         #[serde(rename = "Test Website URL - Revoked")]
         pub test_website_url_revoked: String,
+
         #[serde(rename = "Technically Constrained")]
         pub technically_constrained: String,
+
         #[serde(rename = "Subordinate CA Owner")]
         pub subordinate_ca_owner: String,
+
         #[serde(rename = "Full CRL Issued By This CA")]
         pub full_crl_issued_by_this_ca: String,
+
         #[serde(rename = "JSON Array of Partitioned CRLs")]
         pub json_array_of_partitioned_crls: String,
+
         #[serde(rename = "Valid From (GMT)")]
         pub valid_from_gmt: String,
+
         #[serde(rename = "Valid To (GMT)")]
         pub valid_to_gmt: String,
+
         #[serde(rename = "Derived Trust Bits")]
         pub derived_trust_bits: String,
+
         #[serde(rename = "Chrome Status")]
         pub chrome_status: String,
+
         #[serde(rename = "Microsoft Status")]
         pub microsoft_status: String,
+
         #[serde(rename = "Mozilla Status")]
         pub mozilla_status: String,
+
         #[serde(rename = "Status of Root Cert")]
         pub status_of_root_cert: String,
+
         #[serde(rename = "Authority Key Identifier")]
         pub authority_key_identifier: String,
+
         #[serde(rename = "Subject Key Identifier")]
         pub subject_key_identifier: String,
+
         #[serde(rename = "Country")]
         pub country: String,
+
         #[serde(rename = "TLS Capable")]
         pub tls_capable: String,
+
         #[serde(rename = "TLS EV Capable")]
         pub tls_ev_capable: String,
+
         #[serde(rename = "Code Signing Capable")]
         pub code_signing_capable: String,
+
         #[serde(rename = "S/MIME Capable")]
         pub smime_capable: String,
     }
@@ -222,7 +273,7 @@ pub mod all_cert_records {
     /// for each of the rows.
     pub fn read_csv<'csv>(
         data: impl Read + 'csv,
-    ) -> impl Iterator<Item=Result<CertificateMetadata>> {
+    ) -> impl Iterator<Item = Result<CertificateMetadata>> {
         csv_metadata_iter(data)
     }
 }
@@ -235,9 +286,11 @@ pub mod all_cert_records {
 /// If you are interested in issuers included in other programs, for purposes other than TLS,
 /// or for metadata such as CPS or CRL URLs, prefer the broader [`all_cert_records`] module.
 pub mod mozilla_included_roots {
-    use crate::{csv_metadata_iter, Result};
-    use serde::Deserialize;
     use std::io::Read;
+
+    use serde::Deserialize;
+
+    use super::{csv_metadata_iter, Result};
 
     /// URL for the CCADB Mozilla included CA certificate PEM CSV report.
     pub const URL: &str =
@@ -250,75 +303,107 @@ pub mod mozilla_included_roots {
     pub struct CertificateMetadata {
         #[serde(rename = "Owner")]
         pub owner: String,
+
         #[serde(rename = "Certificate Issuer Organization")]
         pub certificate_issuer_organization: String,
+
         #[serde(rename = "Certificate Issuer Organizational Unit")]
         pub certificate_issuer_organizational_unit: String,
+
         #[serde(rename = "Common Name or Certificate Name")]
         pub common_name_or_certificate_name: String,
+
         #[serde(rename = "Certificate Serial Number")]
         pub certificate_serial_number: String,
+
         #[serde(rename = "SHA-256 Fingerprint")]
         pub sha256_fingerprint: String,
+
         #[serde(rename = "Subject + SPKI SHA256")]
         pub subject_spki_sha256: String,
+
         #[serde(rename = "Valid From [GMT]")]
         pub valid_from_gmt: String,
+
         #[serde(rename = "Valid To [GMT]")]
         pub valid_to_gmt: String,
+
         #[serde(rename = "Public Key Algorithm")]
         pub public_key_algorithm: String,
+
         #[serde(rename = "Signature Hash Algorithm")]
         pub signature_hash_algorithm: String,
+
         #[serde(rename = "Trust Bits")]
         pub trust_bits: String,
+
         #[serde(rename = "Distrust for TLS After Date")]
         pub distrust_for_tls_after_date: String,
+
         #[serde(rename = "Distrust for S/MIME After Date")]
         pub distrust_for_smime_after_date: String,
+
         #[serde(rename = "EV Policy OID(s)")]
         pub ev_policy_oids: String,
+
         #[serde(rename = "Approval Bug")]
         pub approval_bug: String,
+
         #[serde(rename = "NSS Release When First Included")]
         pub nss_release_when_first_included: String,
+
         #[serde(rename = "Firefox Release When First Included")]
         pub firefox_release_when_first_included: String,
+
         #[serde(rename = "Test Website - Valid")]
         pub test_website_valid: String,
+
         #[serde(rename = "Test Website - Expired")]
         pub test_website_expired: String,
+
         #[serde(rename = "Test Website - Revoked")]
         pub test_website_revoked: String,
+
         #[serde(rename = "Mozilla Applied Constraints")]
         pub mozilla_applied_constraints: String,
+
         #[serde(rename = "Company Website")]
         pub company_website: String,
+
         #[serde(rename = "Geographic Focus")]
         pub geographic_focus: String,
+
         #[serde(rename = "Certificate Policy (CP)")]
         pub certificate_policy_cp: String,
+
         #[serde(rename = "Certification Practice Statement (CPS)")]
         pub certificate_practice_statement_cps: String,
+
         #[serde(rename = "Standard Audit")]
         pub standard_audit: String,
+
         #[serde(rename = "BR Audit")]
         pub br_audit: String,
+
         #[serde(rename = "EV Audit")]
         pub ev_audit: String,
+
         #[serde(rename = "Auditor")]
         pub auditor: String,
+
         #[serde(rename = "Standard Audit Type")]
         pub standard_audit_type: String,
+
         #[serde(rename = "Standard Audit Statement Dt")]
         pub standard_audit_statement_dt: String,
+
         #[serde(rename = "PEM Info")]
         pub pem_info: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
     /// for each of the rows.
-    pub fn read_csv(data: impl Read) -> impl Iterator<Item=Result<CertificateMetadata>> {
+    pub fn read_csv(data: impl Read) -> impl Iterator<Item = Result<CertificateMetadata>> {
         csv_metadata_iter(data)
     }
 }
@@ -326,31 +411,22 @@ pub mod mozilla_included_roots {
 #[cfg(test)]
 // simple smoke tests against test data files with 1 record each.
 mod tests {
-    use crate::all_cert_records;
-    use crate::mozilla_included_roots;
-    use crate::Result;
     use std::fs::File;
     use std::path::{Path, PathBuf};
 
-    fn test_resource_path(filename: impl AsRef<Path>) -> PathBuf {
-        let mut resource_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        resource_path.push("testdata/");
-        resource_path.push(filename);
-        resource_path
-    }
+    use super::all_cert_records;
+    use super::mozilla_included_roots;
+    use super::Result;
 
     #[test]
     fn test_included_roots_read_csv() {
         let data_file = File::open(test_resource_path(
             "IncludedCACertificateReportPEMCSV.test.csv",
         ))
-            .unwrap();
+        .unwrap();
 
         let records = mozilla_included_roots::read_csv(data_file)
-            .collect::<Vec<Result<mozilla_included_roots::CertificateMetadata>>>();
-        let records = records
-            .into_iter()
-            .collect::<Result<Vec<mozilla_included_roots::CertificateMetadata>>>()
+            .collect::<Result<Vec<_>>>()
             .expect("failed to parse included certificates records CSV");
         assert!(!records.is_empty());
 
@@ -392,8 +468,7 @@ mod tests {
             pem_info: "'-----BEGIN CERTIFICATE-----\r\nMIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\r\nTzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh\r\ncmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4\r\nWhcNMzUwNjA0MTEwNDM4WjBPMQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJu\r\nZXQgU2VjdXJpdHkgUmVzZWFyY2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBY\r\nMTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAK3oJHP0FDfzm54rVygc\r\nh77ct984kIxuPOZXoHj3dcKi/vVqbvYATyjb3miGbESTtrFj/RQSa78f0uoxmyF+\r\n0TM8ukj13Xnfs7j/EvEhmkvBioZxaUpmZmyPfjxwv60pIgbz5MDmgK7iS4+3mX6U\r\nA5/TR5d8mUgjU+g4rk8Kb4Mu0UlXjIB0ttov0DiNewNwIRt18jA8+o+u3dpjq+sW\r\nT8KOEUt+zwvo/7V3LvSye0rgTBIlDHCNAymg4VMk7BPZ7hm/ELNKjD+Jo2FR3qyH\r\nB5T0Y3HsLuJvW5iB4YlcNHlsdu87kGJ55tukmi8mxdAQ4Q7e2RCOFvu396j3x+UC\r\nB5iPNgiV5+I3lg02dZ77DnKxHZu8A/lJBdiB3QW0KtZB6awBdpUKD9jf1b0SHzUv\r\nKBds0pjBqAlkd25HN7rOrFleaJ1/ctaJxQZBKT5ZPt0m9STJEadao0xAH0ahmbWn\r\nOlFuhjuefXKnEgV4We0+UXgVCwOPjdAvBbI+e0ocS3MFEvzG6uBQE3xDk3SzynTn\r\njh8BCNAw1FtxNrQHusEwMFxIt4I7mKZ9YIqioymCzLq9gwQbooMDQaHWBfEbwrbw\r\nqHyGO0aoSCqI3Haadr8faqU9GY/rOPNk3sgrDQoo//fb4hVC1CLQJ13hef4Y53CI\r\nrU7m2Ys6xt0nUW7/vGT1M0NPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNV\r\nHRMBAf8EBTADAQH/MB0GA1UdDgQWBBR5tFnme7bl5AFzgAiIyBpY9umbbjANBgkq\r\nhkiG9w0BAQsFAAOCAgEAVR9YqbyyqFDQDLHYGmkgJykIrGF1XIpu+ILlaS/V9lZL\r\nubhzEFnTIZd+50xx+7LSYK05qAvqFyFWhfFQDlnrzuBZ6brJFe+GnY+EgPbk6ZGQ\r\n3BebYhtF8GaV0nxvwuo77x/Py9auJ/GpsMiu/X1+mvoiBOv/2X/qkSsisRcOj/KK\r\nNFtY2PwByVS5uCbMiogziUwthDyC3+6WVwW6LLv3xLfHTjuCvjHIInNzktHCgKQ5\r\nORAzI4JMPJ+GslWYHb4phowim57iaztXOoJwTdwJx4nLCgdNbOhdjsnvzqvHu7Ur\r\nTkXWStAmzOVyyghqpZXjFaH3pO3JLF+l+/+sKAIuvtd7u+Nxe5AW0wdeRlN8NwdC\r\njNPElpzVmbUq4JUagEiuTDkHzsxHpFKVK7q4+63SM1N95R1NbdWhscdCb+ZAJzVc\r\noyi3B43njTOQ5yOf+1CceWxG1bQVs5ZufpsMljq4Ui0/1lvh+wjChP4kqKOJ2qxq\r\n4RgqsahDYVvTH9w7jXbyLeiNdd8XM2w9U/t7y0Ff/9yi0GE44Za4rF2LN9d11TPA\r\nmRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d\r\nemyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=\r\n-----END CERTIFICATE-----'".to_string(),
         };
 
-        let first = records.first().unwrap();
-        assert_eq!(first, &expected)
+        assert_eq!(records.first().unwrap(), &expected)
     }
 
     #[test]
@@ -401,14 +476,11 @@ mod tests {
         let data_file = File::open(test_resource_path(
             "AllCertificateRecordsCSVFormat.test.csv",
         ))
-            .unwrap();
+        .unwrap();
 
         let records = all_cert_records::read_csv(data_file)
-            .collect::<Vec<Result<all_cert_records::CertificateMetadata>>>();
-        let records = records
-            .into_iter()
-            .collect::<Result<Vec<all_cert_records::CertificateMetadata>>>()
-            .expect("failed to parse all certificate records CSV");
+            .collect::<Result<Vec<_>>>()
+            .unwrap();
         assert!(!records.is_empty());
 
         let expected = all_cert_records::CertificateMetadata {
@@ -480,4 +552,23 @@ mod tests {
 
         assert_eq!(records.first().unwrap(), &expected);
     }
+
+    fn test_resource_path(filename: impl AsRef<Path>) -> PathBuf {
+        let mut resource_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        resource_path.push("testdata/");
+        resource_path.push(filename);
+        resource_path
+    }
+}
+
+// read the provided data as CSV with a header line, producing an iterator over the
+// deserialized records.
+fn csv_metadata_iter<T: for<'a> Deserialize<'a>>(
+    data: impl Read,
+) -> impl Iterator<Item = Result<T>> {
+    csv::ReaderBuilder::new()
+        .has_headers(true)
+        .from_reader(data)
+        .into_deserialize::<T>()
+        .map(|r| r.map_err(Into::into))
 }
