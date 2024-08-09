@@ -1,47 +1,36 @@
 #![warn(clippy::pedantic)]
+
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Take};
 use std::path::Path;
 use std::sync::Arc;
 use std::time::Duration;
-use std::{fmt, io};
-
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// `READ_LIMIT` prevents the server from exhausting our memory with a huge response. It should
-/// be larger than all of the CCADB CSV file sizes.
-const READ_LIMIT: u64 = 25_000_000; // 25 MB (SI).
-
-/// Root certificate used to anchor the certificate chain offered by the CCADB API endpoints.
-/// This is hardcoded to a vendored copy of the DER encoding of the root certificate to allow
-/// the ccadb-utils to be used to generate a webpki-roots compatible root store without
-/// depending on a platform root store, or a webpki-roots dependency.
-///
-/// If the Salesforce API certificate chain changes we will have to update this root certificate.
-///
-/// Sourced out-of-band from <https://cacerts.digicert.com/DigiCertGlobalRootCA.crt>
-const CCADB_API_ROOT: &[u8] = include_bytes!("DigiCertGlobalRootCA.crt");
+use std::{fmt, io, result};
 
 /// Convenience type for functions that return a `T` on success or a [`FetchError`] otherwise.
-pub type Result<T> = core::result::Result<T, FetchError>;
+pub type Result<T> = result::Result<T, FetchError>;
 
+/// An error that can occur while fetching or parsing a CCADB data source.
 #[derive(Debug)]
 #[non_exhaustive]
-/// An error that can occur while fetching or parsing a CCADB data source.
 pub enum FetchError {
+    /// An HTTP level error fetching the CSV data from the CCADB API.
     #[non_exhaustive]
-    /// A HTTP level error fetching the CSV data from the CCADB API.
     Api { source: Box<ureq::Error> },
-    #[non_exhaustive]
+
     /// An error that occurred while processing CCADB CSV data.
+    #[non_exhaustive]
     DataSource {
         source: Box<ccadb_csv::DataSourceError>,
     },
+
     /// An error writing CCADB CSV to disk.
     #[non_exhaustive]
     File { source: io::Error },
+
     /// An unknown report type was requested.
+    #[non_exhaustive]
     UnknownReport { name: String },
 }
 
@@ -95,11 +84,12 @@ impl From<io::Error> for FetchError {
     }
 }
 
-// Types of CCADB CSV reports that can be fetched.
+/// Types of CCADB CSV reports that can be fetched.
 pub enum ReportType {
-    // Metadata report for all certificates (roots and intermediates) in the CCADB.
+    /// Metadata report for all certificates (roots and intermediates) in the CCADB.
     AllCertRecords,
-    // Metadata report for Mozilla included root certificates in the CCADB (with PEM).
+
+    /// Metadata report for Mozilla included root certificates in the CCADB (with PEM).
     MozillaIncludedRoots,
 }
 
@@ -125,11 +115,11 @@ impl fmt::Display for ReportType {
 impl TryFrom<&str> for ReportType {
     type Error = FetchError;
 
-    fn try_from(report_type: &str) -> std::result::Result<Self, Self::Error> {
+    fn try_from(report_type: &str) -> result::Result<Self, Self::Error> {
         match report_type {
             "all-cert-records" => Ok(ReportType::AllCertRecords),
             "mozilla-included-roots" => Ok(ReportType::MozillaIncludedRoots),
-            &_ => Err(FetchError::UnknownReport {
+            _ => Err(FetchError::UnknownReport {
                 name: report_type.to_owned(),
             }),
         }
@@ -155,8 +145,7 @@ fn read_csv_url(url: &str) -> Result<Take<Box<dyn Read + Send + Sync>>> {
         .user_agent(format!("ccadb-csv-fetch/{VERSION}").as_ref())
         .build();
 
-    let resp = agent.get(url).call()?;
-    Ok(resp.into_reader().take(READ_LIMIT))
+    Ok(agent.get(url).call()?.into_reader().take(READ_LIMIT))
 }
 
 // builds a TLS ClientConfig that has only one trust anchor, the vendored
@@ -173,3 +162,19 @@ fn tls_config() -> rustls::ClientConfig {
         .with_root_certificates(root_store)
         .with_no_client_auth()
 }
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// `READ_LIMIT` prevents the server from exhausting our memory with a huge response. It should
+/// be larger than all of the CCADB CSV file sizes.
+const READ_LIMIT: u64 = 25_000_000; // 25 MB (SI).
+
+/// Root certificate used to anchor the certificate chain offered by the CCADB API endpoints.
+/// This is hardcoded to a vendored copy of the DER encoding of the root certificate to allow
+/// the ccadb-utils to be used to generate a webpki-roots compatible root store without
+/// depending on a platform root store, or a webpki-roots dependency.
+///
+/// If the Salesforce API certificate chain changes we will have to update this root certificate.
+///
+/// Sourced out-of-band from <https://cacerts.digicert.com/DigiCertGlobalRootCA.crt>
+const CCADB_API_ROOT: &[u8] = include_bytes!("DigiCertGlobalRootCA.crt");

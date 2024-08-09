@@ -1,10 +1,10 @@
-use ccadb_csv_fetch::{fetch_report, FetchError, ReportType};
-use indicatif::{ProgressBar, ProgressStyle};
 use std::path::Path;
 use std::time;
 use std::time::Duration;
 
-const DEFAULT_REPORT_TYPE: ReportType = ReportType::MozillaIncludedRoots;
+use indicatif::{ProgressBar, ProgressStyle};
+
+use ccadb_csv_fetch::{fetch_report, FetchError, ReportType};
 
 /// usage:
 ///   ccadb-csv-fetch ("mozilla-included-roots"|"all-cert-records") (csv-output-path)
@@ -55,3 +55,5 @@ fn download(report_type: ReportType, output_path: impl AsRef<Path>) -> Result<()
 
     Ok(())
 }
+
+const DEFAULT_REPORT_TYPE: ReportType = ReportType::MozillaIncludedRoots;
