@@ -1,32 +1,36 @@
 #![warn(clippy::pedantic)]
-use ccadb_csv::all_cert_records::CertificateMetadata;
-use reqwest::StatusCode;
+
 use std::error::Error;
 use std::path::Path;
 use std::sync::Arc;
-use std::{fmt, io};
+use std::{fmt, io, result};
+
+use reqwest::StatusCode;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-const MOZILLA_STATUS_INCLUDED: &str = "Included";
-const MOZILLA_STATUS_PROVIDED_BY_CA: &str = "Provided by CA";
-const REVOCATION_STATUS_NOT_REVOKED: &str = "Not Revoked";
+use ccadb_csv::all_cert_records::CertificateMetadata;
 
-type Result<T> = core::result::Result<T, ProcessingError>;
+type Result<T> = result::Result<T, ProcessingError>;
 
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum ProcessingError {
     #[non_exhaustive]
     DataSource { source: ccadb_csv::DataSourceError },
+
     #[non_exhaustive]
     BadCrlUrl { source: url::ParseError },
+
     #[non_exhaustive]
     BadCrlPartitionsJson { source: serde_json::Error },
+
     #[non_exhaustive]
     CrlDownload { url: String, source: reqwest::Error },
+
     #[non_exhaustive]
     BadStatus { url: String, code: StatusCode },
+
     #[non_exhaustive]
     Io { source: io::Error },
 }
@@ -167,7 +171,7 @@ pub fn mozilla_records(
     let root_reports = root_reports
         .into_iter()
         .map(|r| r.map_err(Into::into))
-        .collect::<Result<Vec<CertificateMetadata>>>()?;
+        .collect::<Result<Vec<_>>>()?;
 
     Ok(root_reports.into_iter().filter_map(|metadata| {
         let root = CertificateRecord(metadata);
@@ -182,13 +186,6 @@ pub fn mozilla_records(
             None
         }
     }))
-}
-
-fn download_err(url: &reqwest::Url, err: reqwest::Error) -> ProcessingError {
-    ProcessingError::CrlDownload {
-        url: url.to_string(),
-        source: err,
-    }
 }
 
 /// Download the provided CRL `url` using the `client`, writing the DER result to `out_path`.
@@ -219,3 +216,14 @@ pub async fn download_crl(
     File::create(&out_path).await?.write_all(&bytes).await?;
     Ok(())
 }
+
+fn download_err(url: &reqwest::Url, err: reqwest::Error) -> ProcessingError {
+    ProcessingError::CrlDownload {
+        url: url.to_string(),
+        source: err,
+    }
+}
+
+const MOZILLA_STATUS_INCLUDED: &str = "Included";
+const MOZILLA_STATUS_PROVIDED_BY_CA: &str = "Provided by CA";
+const REVOCATION_STATUS_NOT_REVOKED: &str = "Not Revoked";
