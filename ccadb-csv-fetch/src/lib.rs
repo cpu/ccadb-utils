@@ -1,5 +1,3 @@
-#![warn(clippy::pedantic)]
-
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Take};
@@ -178,3 +176,39 @@ const READ_LIMIT: u64 = 25_000_000; // 25 MB (SI).
 ///
 /// Sourced out-of-band from <https://cacerts.digicert.com/DigiCertGlobalRootCA.crt>
 const CCADB_API_ROOT: &[u8] = include_bytes!("DigiCertGlobalRootCA.crt");
+
+#[cfg(test)]
+mod tests {
+    use crate::{read_csv_url, ReportType};
+    use std::io::{BufRead, BufReader};
+
+    /// Quick-n-dirty test to see if the upstream data has changed format.
+    /// We do this in this crate instead of ccadb-csv because we already
+    /// have the machinery to download the report CSV here.
+    #[test]
+    fn csv_header_check() {
+        // Keep in-sync with ccadb-csv/src/lib.rs.
+        let expected_headers = [
+            (
+                ReportType::AllCertRecords,
+                r#""CA Owner","Salesforce Record ID","Certificate Name","Parent Salesforce Record ID","Parent Certificate Name","Certificate Record Type","Revocation Status","SHA-256 Fingerprint","Parent SHA-256 Fingerprint","Audits Same as Parent?","Auditor","Standard Audit URL","Standard Audit Type","Standard Audit Statement Date","Standard Audit Period Start Date","Standard Audit Period End Date","NetSec Audit URL","NetSec Audit Type","NetSec Audit Statement Date","NetSec Audit Period Start Date","NetSec Audit Period End Date","TLS BR Audit URL","TLS BR Audit Type","TLS BR Audit Statement Date","TLS BR Audit Period Start Date","TLS BR Audit Period End Date","TLS EVG Audit URL","TLS EVG Audit Type","TLS EVG Audit Statement Date","TLS EVG Audit Period Start Date","TLS EVG Audit Period End Date","Code Signing Audit URL","Code Signing Audit Type","Code Signing Audit Statement Date","Code Signing Audit Period Start Date","Code Signing Audit Period End Date","S/MIME BR Audit URL","S/MIME BR Audit Type","S/MIME BR Audit Statement Date","S/MIME BR Audit Period Start Date","S/MIME BR Audit Period End Date","CP/CPS Same as Parent?","Certificate Policy (CP) URL","Certificate Practice Statement (CPS) URL","CP/CPS Last Updated Date","Test Website URL - Valid","Test Website URL - Expired","Test Website URL - Revoked","Technically Constrained","Subordinate CA Owner","Full CRL Issued By This CA","JSON Array of Partitioned CRLs","Valid From (GMT)","Valid To (GMT)","Derived Trust Bits","Chrome Status","Microsoft Status","Mozilla Status","Status of Root Cert","Authority Key Identifier","Subject Key Identifier","Country","TLS Capable","TLS EV Capable","Code Signing Capable","S/MIME Capable""#,
+            ),
+            (
+                ReportType::MozillaIncludedRoots,
+                r#""Owner","Certificate Issuer Organization","Certificate Issuer Organizational Unit","Common Name or Certificate Name","Certificate Serial Number","SHA-256 Fingerprint","Subject + SPKI SHA256","Valid From [GMT]","Valid To [GMT]","Public Key Algorithm","Signature Hash Algorithm","Trust Bits","Distrust for TLS After Date","Distrust for S/MIME After Date","EV Policy OID(s)","Approval Bug","NSS Release When First Included","Firefox Release When First Included","Test Website - Valid","Test Website - Expired","Test Website - Revoked","Mozilla Applied Constraints","Company Website","Geographic Focus","Certificate Policy (CP)","Certification Practice Statement (CPS)","Standard Audit","BR Audit","EV Audit","Auditor","Standard Audit Type","Standard Audit Statement Dt","PEM Info""#,
+            ),
+        ];
+
+        for (report_type, expected_header) in expected_headers {
+            let report_data = read_csv_url(report_type.url()).expect("CSV URL fetch failed");
+
+            let mut buf_reader = BufReader::new(report_data);
+            let mut first_line = String::new();
+            buf_reader
+                .read_line(&mut first_line)
+                .expect("CSV missing header line");
+
+            assert_eq!(first_line.trim(), expected_header);
+        }
+    }
+}

@@ -15,8 +15,6 @@
 //!
 //! [Common CA Database]: https://www.ccadb.org/
 //! [CCADB Resources]: https://www.ccadb.org/resources
-#![warn(clippy::pedantic)]
-
 use std::error::Error;
 use std::io::Read;
 use std::{fmt, result};
