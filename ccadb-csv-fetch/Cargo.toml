@@ -8,8 +8,8 @@ repository = "https://github.com/cpu/ccadb-utils"
 keywords = ["ccadb", "pki", "tls"]
 
 [dependencies]
-ureq = { version = "2.9", default-features = false, features = [ "tls" ] }
-rustls = "0.22"
+ureq = { version = "2.10", default-features = false, features = [ "tls" ] }
+rustls = "0.23"
 rustls-webpki = "0.102"
 indicatif = "0.17"
 ccadb-csv = { path = "../ccadb-csv", version = "0.3"}
