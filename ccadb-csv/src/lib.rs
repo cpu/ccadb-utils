@@ -16,10 +16,12 @@
 //! [Common CA Database]: https://www.ccadb.org/
 //! [CCADB Resources]: https://www.ccadb.org/resources
 #![warn(clippy::pedantic)]
-use serde::Deserialize;
+
 use std::error::Error;
 use std::fmt;
 use std::io::Read;
+
+use serde::Deserialize;
 
 /// Convenience type for functions that return a `T` on success or a [`DataSourceError`] otherwise.
 pub type Result<T> = core::result::Result<T, DataSourceError>;
@@ -62,7 +64,7 @@ impl From<csv::Error> for DataSourceError {
 // deserialized records.
 fn csv_metadata_iter<T: for<'a> Deserialize<'a>>(
     data: impl Read,
-) -> impl Iterator<Item = Result<T>> {
+) -> impl Iterator<Item=Result<T>> {
     csv::ReaderBuilder::new()
         .has_headers(true)
         .from_reader(data)
@@ -70,7 +72,7 @@ fn csv_metadata_iter<T: for<'a> Deserialize<'a>>(
         .map(|r| r.map_err(Into::into))
 }
 
-/// Module for processing the CCADB "all certificate records" CSV report.
+/// Module for processing the CCADB "all certificate records version 2" CSV report.
 ///
 /// This report contains information on both root certificates and intermediates, in a variety
 /// of inclusion and trust states. It does not include the PEM of the certificates themselves,
@@ -83,9 +85,9 @@ pub mod all_cert_records {
     use serde::Deserialize;
     use std::io::Read;
 
-    /// URL for the CCADB all certificate records CSV report.
+    /// URL for the CCADB all certificate records version 2 CSV report.
     pub const URL: &str =
-        "https://ccadb-public.secure.force.com/ccadb/AllCertificateRecordsCSVFormat";
+        "https://ccadb.my.salesforce-sites.com/ccadb/AllCertificateRecordsCSVFormatv2";
 
     #[allow(dead_code)]
     #[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
@@ -124,36 +126,46 @@ pub mod all_cert_records {
         pub standard_audit_period_start_date: String,
         #[serde(rename = "Standard Audit Period End Date")]
         pub standard_audit_period_end_date: String,
-        #[serde(rename = "BR Audit URL")]
-        pub br_audit_url: String,
-        #[serde(rename = "BR Audit Type")]
-        pub br_audit_type: String,
-        #[serde(rename = "BR Audit Statement Date")]
-        pub br_audit_statement_date: String,
-        #[serde(rename = "BR Audit Period Start Date")]
-        pub br_audit_period_start_date: String,
-        #[serde(rename = "BR Audit Period End Date")]
-        pub br_audit_period_end_date: String,
-        #[serde(rename = "EV SSL Audit URL")]
-        pub ev_ssl_audit_url: String,
-        #[serde(rename = "EV SSL Audit Type")]
-        pub ev_ssl_audit_type: String,
-        #[serde(rename = "EV SSL Audit Statement Date")]
-        pub ev_ssl_audit_statement_date: String,
-        #[serde(rename = "EV SSL Audit Period Start Date")]
-        pub ev_ssl_audit_period_start_date: String,
-        #[serde(rename = "EV SSL Audit Period End Date")]
-        pub ev_ssl_audit_period_end_date: String,
-        #[serde(rename = "EV Code Signing Audit URL")]
-        pub ev_code_signing_audit_url: String,
-        #[serde(rename = "EV Code Signing Audit Type")]
-        pub ev_code_signing_audit_type: String,
-        #[serde(rename = "EV Code Signing Audit Statement Date")]
-        pub ev_code_signing_audit_statement_date: String,
-        #[serde(rename = "EV Code Signing Audit Period Start Date")]
-        pub ev_code_signing_audit_period_start_date: String,
-        #[serde(rename = "EV Code Signing Audit Period End Date")]
-        pub ev_code_signing_audit_period_end_date: String,
+        #[serde(rename = "NetSec Audit URL")]
+        pub netsec_audit_url: String,
+        #[serde(rename = "NetSec Audit Type")]
+        pub netsec_audit_type: String,
+        #[serde(rename = "NetSec Audit Statement Date")]
+        pub netsec_audit_statement_date: String,
+        #[serde(rename = "NetSec Audit Period Start Date")]
+        pub netsec_audit_period_start_date: String,
+        #[serde(rename = "NetSec Audit Period End Date")]
+        pub netsec_audit_period_end_date: String,
+        #[serde(rename = "TLS BR Audit URL")]
+        pub tls_br_audit_url: String,
+        #[serde(rename = "TLS BR Audit Type")]
+        pub tls_br_audit_type: String,
+        #[serde(rename = "TLS BR Audit Statement Date")]
+        pub tls_br_audit_statement_date: String,
+        #[serde(rename = "TLS BR Audit Period Start Date")]
+        pub tls_br_audit_period_start_date: String,
+        #[serde(rename = "TLS BR Audit Period End Date")]
+        pub tls_br_audit_period_end_date: String,
+        #[serde(rename = "TLS EVG Audit URL")]
+        pub tls_evg_audit_url: String,
+        #[serde(rename = "TLS EVG Audit Type")]
+        pub tls_evg_audit_type: String,
+        #[serde(rename = "TLS EVG Audit Statement Date")]
+        pub tls_evg_audit_statement_date: String,
+        #[serde(rename = "TLS EVG Audit Period Start Date")]
+        pub tls_evg_audit_period_start_date: String,
+        #[serde(rename = "TLS EVG Audit Period End Date")]
+        pub tls_evg_audit_period_end_date: String,
+        #[serde(rename = "Code Signing Audit URL")]
+        pub code_signing_audit_url: String,
+        #[serde(rename = "Code Signing Audit Type")]
+        pub code_signing_audit_type: String,
+        #[serde(rename = "Code Signing Audit Statement Date")]
+        pub code_signing_audit_statement_date: String,
+        #[serde(rename = "Code Signing Audit Period Start Date")]
+        pub code_signing_audit_period_start_date: String,
+        #[serde(rename = "Code Signing Audit Period End Date")]
+        pub code_signing_audit_period_end_date: String,
         #[serde(rename = "CP/CPS Same as Parent?")]
         pub cp_cps_same_as_parent: String,
         #[serde(rename = "Certificate Policy (CP) URL")]
@@ -170,10 +182,6 @@ pub mod all_cert_records {
         pub test_website_url_revoked: String,
         #[serde(rename = "Technically Constrained")]
         pub technically_constrained: String,
-        #[serde(rename = "Mozilla Status")]
-        pub mozilla_status: String,
-        #[serde(rename = "Microsoft Status")]
-        pub microsoft_status: String,
         #[serde(rename = "Subordinate CA Owner")]
         pub subordinate_ca_owner: String,
         #[serde(rename = "Full CRL Issued By This CA")]
@@ -184,21 +192,37 @@ pub mod all_cert_records {
         pub valid_from_gmt: String,
         #[serde(rename = "Valid To (GMT)")]
         pub valid_to_gmt: String,
-        #[serde(rename = "Chrome Status")]
-        pub chrome_status: String,
         #[serde(rename = "Derived Trust Bits")]
         pub derived_trust_bits: String,
+        #[serde(rename = "Chrome Status")]
+        pub chrome_status: String,
+        #[serde(rename = "Microsoft Status")]
+        pub microsoft_status: String,
+        #[serde(rename = "Mozilla Status")]
+        pub mozilla_status: String,
         #[serde(rename = "Status of Root Cert")]
         pub status_of_root_cert: String,
+        #[serde(rename = "Authority Key Identifier")]
+        pub authority_key_identifier: String,
+        #[serde(rename = "Subject Key Identifier")]
+        pub subject_key_identifier: String,
         #[serde(rename = "Country")]
         pub country: String,
+        #[serde(rename = "TLS Capable")]
+        pub tls_capable: String,
+        #[serde(rename = "TLS EV Capable")]
+        pub tls_ev_capable: String,
+        #[serde(rename = "Code Signing Capable")]
+        pub code_signing_capable: String,
+        #[serde(rename = "S/MIME Capable")]
+        pub smime_capable: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
     /// for each of the rows.
     pub fn read_csv<'csv>(
         data: impl Read + 'csv,
-    ) -> impl Iterator<Item = Result<CertificateMetadata>> {
+    ) -> impl Iterator<Item=Result<CertificateMetadata>> {
         csv_metadata_iter(data)
     }
 }
@@ -294,7 +318,7 @@ pub mod mozilla_included_roots {
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
     /// for each of the rows.
-    pub fn read_csv(data: impl Read) -> impl Iterator<Item = Result<CertificateMetadata>> {
+    pub fn read_csv(data: impl Read) -> impl Iterator<Item=Result<CertificateMetadata>> {
         csv_metadata_iter(data)
     }
 }
@@ -320,7 +344,7 @@ mod tests {
         let data_file = File::open(test_resource_path(
             "IncludedCACertificateReportPEMCSV.test.csv",
         ))
-        .unwrap();
+            .unwrap();
 
         let records = mozilla_included_roots::read_csv(data_file)
             .collect::<Vec<Result<mozilla_included_roots::CertificateMetadata>>>();
@@ -377,7 +401,7 @@ mod tests {
         let data_file = File::open(test_resource_path(
             "AllCertificateRecordsCSVFormat.test.csv",
         ))
-        .unwrap();
+            .unwrap();
 
         let records = all_cert_records::read_csv(data_file)
             .collect::<Vec<Result<all_cert_records::CertificateMetadata>>>();
@@ -399,7 +423,7 @@ mod tests {
             sha256_fingerprint: "C0EE0CCED463096DF07D27257AF79C986FF92B678F669C109FFF570F32AB433F"
                 .to_string(),
             parent_sha256_fingerprint:
-                "8A866FD1B276B57E578E921C65828A2BED58E9F2F288054134B7F1F4BFC9CC74".to_string(),
+            "8A866FD1B276B57E578E921C65828A2BED58E9F2F288054134B7F1F4BFC9CC74".to_string(),
             audits_same_as_parent: "true".to_string(),
             auditor: "".to_string(),
             standard_audit_url: "".to_string(),
@@ -407,21 +431,26 @@ mod tests {
             standard_audit_statement_date: "".to_string(),
             standard_audit_period_start_date: "".to_string(),
             standard_audit_period_end_date: "".to_string(),
-            br_audit_url: "".to_string(),
-            br_audit_type: "".to_string(),
-            br_audit_statement_date: "".to_string(),
-            br_audit_period_start_date: "".to_string(),
-            br_audit_period_end_date: "".to_string(),
-            ev_ssl_audit_url: "".to_string(),
-            ev_ssl_audit_type: "".to_string(),
-            ev_ssl_audit_statement_date: "".to_string(),
-            ev_ssl_audit_period_start_date: "".to_string(),
-            ev_ssl_audit_period_end_date: "".to_string(),
-            ev_code_signing_audit_url: "".to_string(),
-            ev_code_signing_audit_type: "".to_string(),
-            ev_code_signing_audit_statement_date: "".to_string(),
-            ev_code_signing_audit_period_start_date: "".to_string(),
-            ev_code_signing_audit_period_end_date: "".to_string(),
+            netsec_audit_url: "".to_string(),
+            netsec_audit_type: "".to_string(),
+            netsec_audit_statement_date: "".to_string(),
+            netsec_audit_period_start_date: "".to_string(),
+            netsec_audit_period_end_date: "".to_string(),
+            tls_br_audit_url: "".to_string(),
+            tls_br_audit_type: "".to_string(),
+            tls_br_audit_statement_date: "".to_string(),
+            tls_br_audit_period_start_date: "".to_string(),
+            tls_br_audit_period_end_date: "".to_string(),
+            tls_evg_audit_url: "".to_string(),
+            tls_evg_audit_type: "".to_string(),
+            tls_evg_audit_statement_date: "".to_string(),
+            tls_evg_audit_period_start_date: "".to_string(),
+            tls_evg_audit_period_end_date: "".to_string(),
+            code_signing_audit_url: "".to_string(),
+            code_signing_audit_type: "".to_string(),
+            code_signing_audit_statement_date: "".to_string(),
+            code_signing_audit_period_start_date: "".to_string(),
+            code_signing_audit_period_end_date: "".to_string(),
             cp_cps_same_as_parent: "true".to_string(),
             certificate_policy_url: "".to_string(),
             certificate_practice_statement_cps_url: "".to_string(),
@@ -440,10 +469,15 @@ mod tests {
             chrome_status: "Not Included".to_string(),
             derived_trust_bits: "Client Authentication;Secure Email;Document Signing".to_string(),
             status_of_root_cert: "Apple: Included; Google Chrome: Included; Microsoft: Included; Mozilla: Included".to_string(),
+            authority_key_identifier: "o5fW816iEOGrRZ88F2Q87gFwnMw=".to_string(),
+            subject_key_identifier: "7RAkwGs8hi1E+nylj8w5J87dR7c=".to_string(),
             country: "Bermuda".to_string(),
+            tls_capable: "False".to_string(),
+            tls_ev_capable: "False".to_string(),
+            code_signing_capable: "False".to_string(),
+            smime_capable: "True".to_string(),
         };
 
-        let first = records.first().unwrap();
-        assert_eq!(first, &expected);
+        assert_eq!(records.first().unwrap(), &expected);
     }
 }

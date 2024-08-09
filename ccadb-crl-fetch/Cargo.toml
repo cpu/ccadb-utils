@@ -1,6 +1,6 @@
 [package]
 name = "ccadb-crl-fetch"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MPL-2.0"
 description = "Utility for mass-downloading CRLs from Common CA Database (CCADB) CSV reports."
@@ -17,5 +17,5 @@ reqwest = { workspace = true, features = ["rustls-tls", "trust-dns"] }
 url = { workspace = true }
 serde_json = { workspace = true }
 indicatif = { workspace = true }
-ccadb-csv = { path = "../ccadb-csv", version = "0.3"}
+ccadb-csv = { path = "../ccadb-csv", version = "0.4" }
 
