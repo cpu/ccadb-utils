@@ -292,7 +292,7 @@ pub mod mozilla_included_roots {
 
     /// URL for the CCADB Mozilla included CA certificate PEM CSV report.
     pub const URL: &str =
-        "https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReportPEMCSV";
+        "https://ccadb.my.salesforce-sites.com/mozilla/IncludedCACertificateReportPEMCSV";
 
     #[allow(dead_code)]
     #[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
