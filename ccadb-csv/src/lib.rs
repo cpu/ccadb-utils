@@ -265,6 +265,21 @@ pub mod all_cert_records {
 
         #[serde(rename = "S/MIME Capable")]
         pub smime_capable: String,
+
+        #[serde(rename = "CP Same as Parent?")]
+        pub cp_same_as_parent: String,
+
+        #[serde(rename = "CP Last Update Date")]
+        pub cp_last_update_date: String,
+
+        #[serde(rename = "CPS Same as Parent?")]
+        pub cps_same_as_parent: String,
+
+        #[serde(rename = "CPS Last Update Date")]
+        pub cps_last_update_date: String,
+
+        #[serde(rename = "Certificate Practice & Policy Statement")]
+        pub certificate_practice_policy_statement: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
@@ -546,6 +561,11 @@ mod tests {
             tls_ev_capable: "False".to_string(),
             code_signing_capable: "False".to_string(),
             smime_capable: "True".to_string(),
+            cp_same_as_parent: "true".to_string(),
+            cp_last_update_date: "".to_string(),
+            cps_same_as_parent: "true".to_string(),
+            cps_last_update_date: "".to_string(),
+            certificate_practice_policy_statement: "".to_string(),
         };
 
         assert_eq!(records.first().unwrap(), &expected);
