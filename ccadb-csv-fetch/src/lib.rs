@@ -83,6 +83,7 @@ impl From<io::Error> for FetchError {
 }
 
 /// Types of CCADB CSV reports that can be fetched.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum ReportType {
     /// Metadata report for all certificates (roots and intermediates) in the CCADB.
     AllCertRecords,
@@ -191,11 +192,11 @@ mod tests {
         let expected_headers = [
             (
                 ReportType::AllCertRecords,
-                r#""CA Owner","Salesforce Record ID","Certificate Name","Parent Salesforce Record ID","Parent Certificate Name","Certificate Record Type","Revocation Status","SHA-256 Fingerprint","Parent SHA-256 Fingerprint","Audits Same as Parent?","Auditor","Standard Audit URL","Standard Audit Type","Standard Audit Statement Date","Standard Audit Period Start Date","Standard Audit Period End Date","NetSec Audit URL","NetSec Audit Type","NetSec Audit Statement Date","NetSec Audit Period Start Date","NetSec Audit Period End Date","TLS BR Audit URL","TLS BR Audit Type","TLS BR Audit Statement Date","TLS BR Audit Period Start Date","TLS BR Audit Period End Date","TLS EVG Audit URL","TLS EVG Audit Type","TLS EVG Audit Statement Date","TLS EVG Audit Period Start Date","TLS EVG Audit Period End Date","Code Signing Audit URL","Code Signing Audit Type","Code Signing Audit Statement Date","Code Signing Audit Period Start Date","Code Signing Audit Period End Date","S/MIME BR Audit URL","S/MIME BR Audit Type","S/MIME BR Audit Statement Date","S/MIME BR Audit Period Start Date","S/MIME BR Audit Period End Date","CP/CPS Same as Parent?","Certificate Policy (CP) URL","Certificate Practice Statement (CPS) URL","CP/CPS Last Updated Date","Test Website URL - Valid","Test Website URL - Expired","Test Website URL - Revoked","Technically Constrained","Subordinate CA Owner","Full CRL Issued By This CA","JSON Array of Partitioned CRLs","Valid From (GMT)","Valid To (GMT)","Derived Trust Bits","Chrome Status","Microsoft Status","Mozilla Status","Status of Root Cert","Authority Key Identifier","Subject Key Identifier","Country","TLS Capable","TLS EV Capable","Code Signing Capable","S/MIME Capable","CP Same as Parent?","CP Last Update Date","CPS Same as Parent?","CPS Last Update Date","Certificate Practice & Policy Statement""#,
+                r#""CA Owner","Salesforce Record ID","Certificate Name","Parent Salesforce Record ID","Parent Certificate Name","Certificate Record Type","Subordinate CA Owner","Apple Status","Chrome Status","Microsoft Status","Mozilla Status","Status of Root Cert","Revocation Status","SHA-256 Fingerprint","Parent SHA-256 Fingerprint","Valid From (GMT)","Valid To (GMT)","Authority Key Identifier","Subject Key Identifier","Technically Constrained","Derived Trust Bits","Full CRL Issued By This CA","JSON Array of Partitioned CRLs","Auditor","Audits Same as Parent?","Standard Audit URL","Standard Audit Type","Standard Audit Statement Date","Standard Audit Period Start Date","Standard Audit Period End Date","NetSec Audit URL","NetSec Audit Type","NetSec Audit Statement Date","NetSec Audit Period Start Date","NetSec Audit Period End Date","TLS BR Audit URL","TLS BR Audit Type","TLS BR Audit Statement Date","TLS BR Audit Period Start Date","TLS BR Audit Period End Date","TLS EVG Audit URL","TLS EVG Audit Type","TLS EVG Audit Statement Date","TLS EVG Audit Period Start Date","TLS EVG Audit Period End Date","Code Signing Audit URL","Code Signing Audit Type","Code Signing Audit Statement Date","Code Signing Audit Period Start Date","Code Signing Audit Period End Date","S/MIME BR Audit URL","S/MIME BR Audit Type","S/MIME BR Audit Statement Date","S/MIME BR Audit Period Start Date","S/MIME BR Audit Period End Date","VMC Audit URL","VMC Audit Type","VMC Audit Statement Date","VMC Audit Period Start Date","VMC Audit Period End Date","Policy Documentation","CA Document Repository","CP Same as Parent?","Certificate Policy (CP) URL","CP Last Update Date","CPS Same as Parent?","Certificate Practice Statement (CPS) URL","CPS Last Update Date","CP/CPS Same as Parent?","Certificate Practice & Policy Statement","CP/CPS Last Updated Date","Test Website URL - Valid","Test Website URL - Expired","Test Website URL - Revoked","TLS Capable","TLS EV Capable","Code Signing Capable","S/MIME Capable","Country""#,
             ),
             (
                 ReportType::MozillaIncludedRoots,
-                r#""Owner","Certificate Issuer Organization","Certificate Issuer Organizational Unit","Common Name or Certificate Name","Certificate Serial Number","SHA-256 Fingerprint","Subject + SPKI SHA256","Valid From [GMT]","Valid To [GMT]","Public Key Algorithm","Signature Hash Algorithm","Trust Bits","Distrust for TLS After Date","Distrust for S/MIME After Date","EV Policy OID(s)","Approval Bug","NSS Release When First Included","Firefox Release When First Included","Test Website - Valid","Test Website - Expired","Test Website - Revoked","Mozilla Applied Constraints","Company Website","Geographic Focus","Certificate Policy (CP)","Certification Practice Statement (CPS)","Standard Audit","BR Audit","EV Audit","Auditor","Standard Audit Type","Standard Audit Statement Dt","PEM Info""#,
+                r#""Owner","Certificate Issuer Organization","Certificate Issuer Organizational Unit","Common Name or Certificate Name","Certificate Serial Number","SHA-256 Fingerprint","Subject + SPKI SHA256","Valid From [GMT]","Valid To [GMT]","Public Key Algorithm","Signature Hash Algorithm","Trust Bits","Distrust for TLS After Date","Distrust for S/MIME After Date","EV Policy OID(s)","Approval Bug","NSS Release When First Included","Firefox Release When First Included","Test Website - Valid","Test Website - Expired","Test Website - Revoked","Mozilla Applied Constraints","Company Website","Geographic Focus","Certificate Policy (CP)","Certification Practice Statement (CPS)"," Certificate Practice & Policy Statement (CP/CPS)","Standard Audit","BR Audit","EV Audit","Auditor","Standard Audit Type","Standard Audit Statement Dt","PEM Info""#,
             ),
         ];
 
@@ -208,7 +209,12 @@ mod tests {
                 .read_line(&mut first_line)
                 .expect("CSV missing header line");
 
-            assert_eq!(first_line.trim(), expected_header);
+            assert_eq!(
+                first_line.trim(),
+                expected_header,
+                "report type {report_type:?}:\nexpected:\n{expected_header}\ngot:\n{}\n",
+                first_line.trim()
+            );
         }
     }
 }

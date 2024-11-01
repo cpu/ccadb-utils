@@ -17,5 +17,5 @@ reqwest = { workspace = true, features = ["rustls-tls", "trust-dns"] }
 url = { workspace = true }
 serde_json = { workspace = true }
 indicatif = { workspace = true }
-ccadb-csv = { path = "../ccadb-csv", version = "0.5" }
+ccadb-csv = { path = "../ccadb-csv", version = "0.6" }
 

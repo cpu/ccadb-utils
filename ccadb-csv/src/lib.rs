@@ -101,6 +101,24 @@ pub mod all_cert_records {
         #[serde(rename = "Certificate Record Type")]
         pub certificate_record_type: String,
 
+        #[serde(rename = "Subordinate CA Owner")]
+        pub subordinate_ca_owner: String,
+
+        #[serde(rename = "Apple Status")]
+        pub apple_status: String,
+
+        #[serde(rename = "Chrome Status")]
+        pub chrome_status: String,
+
+        #[serde(rename = "Microsoft Status")]
+        pub microsoft_status: String,
+
+        #[serde(rename = "Mozilla Status")]
+        pub mozilla_status: String,
+
+        #[serde(rename = "Status of Root Cert")]
+        pub status_of_root_cert: String,
+
         #[serde(rename = "Revocation Status")]
         pub revocation_status: String,
 
@@ -110,11 +128,35 @@ pub mod all_cert_records {
         #[serde(rename = "Parent SHA-256 Fingerprint")]
         pub parent_sha256_fingerprint: String,
 
-        #[serde(rename = "Audits Same as Parent?")]
-        pub audits_same_as_parent: String,
+        #[serde(rename = "Valid From (GMT)")]
+        pub valid_from_gmt: String,
+
+        #[serde(rename = "Valid To (GMT)")]
+        pub valid_to_gmt: String,
+
+        #[serde(rename = "Authority Key Identifier")]
+        pub authority_key_identifier: String,
+
+        #[serde(rename = "Subject Key Identifier")]
+        pub subject_key_identifier: String,
+
+        #[serde(rename = "Technically Constrained")]
+        pub technically_constrained: String,
+
+        #[serde(rename = "Derived Trust Bits")]
+        pub derived_trust_bits: String,
+
+        #[serde(rename = "Full CRL Issued By This CA")]
+        pub full_crl_issued_by_this_ca: String,
+
+        #[serde(rename = "JSON Array of Partitioned CRLs")]
+        pub json_array_of_partitioned_crls: String,
 
         #[serde(rename = "Auditor")]
         pub auditor: String,
+
+        #[serde(rename = "Audits Same as Parent?")]
+        pub audits_same_as_parent: String,
 
         #[serde(rename = "Standard Audit URL")]
         pub standard_audit_url: String,
@@ -191,14 +233,65 @@ pub mod all_cert_records {
         #[serde(rename = "Code Signing Audit Period End Date")]
         pub code_signing_audit_period_end_date: String,
 
-        #[serde(rename = "CP/CPS Same as Parent?")]
-        pub cp_cps_same_as_parent: String,
+        #[serde(rename = "S/MIME BR Audit URL")]
+        pub smime_br_audit_url: String,
+
+        #[serde(rename = "S/MIME BR Audit Type")]
+        pub smime_br_audit_type: String,
+
+        #[serde(rename = "S/MIME BR Audit Statement Date")]
+        pub smime_br_audit_statement_date: String,
+
+        #[serde(rename = "S/MIME BR Audit Period Start Date")]
+        pub smime_br_audit_period_start_date: String,
+
+        #[serde(rename = "S/MIME BR Audit Period End Date")]
+        pub smime_br_audit_period_end_date: String,
+
+        #[serde(rename = "VMC Audit URL")]
+        pub vmc_audit_url: String,
+
+        #[serde(rename = "VMC Audit Type")]
+        pub vmc_audit_type: String,
+
+        #[serde(rename = "VMC Audit Statement Date")]
+        pub vmc_audit_statement_date: String,
+
+        #[serde(rename = "VMC Audit Period Start Date")]
+        pub vmc_udit_period_start_date: String,
+
+        #[serde(rename = "VMC Audit Period End Date")]
+        pub vmc_audit_period_end_date: String,
+
+        #[serde(rename = "Policy Documentation")]
+        pub policy_documentation: String,
+
+        #[serde(rename = "CA Document Repository")]
+        pub ca_document_repository: String,
+
+        #[serde(rename = "CP Same as Parent?")]
+        pub cp_same_as_parent: String,
 
         #[serde(rename = "Certificate Policy (CP) URL")]
         pub certificate_policy_url: String,
 
+        #[serde(rename = "CP Last Update Date")]
+        pub cp_last_update_date: String,
+
+        #[serde(rename = "CPS Same as Parent?")]
+        pub cps_same_as_parent: String,
+
         #[serde(rename = "Certificate Practice Statement (CPS) URL")]
         pub certificate_practice_statement_cps_url: String,
+
+        #[serde(rename = "CPS Last Update Date")]
+        pub cps_last_update_date: String,
+
+        #[serde(rename = "CP/CPS Same as Parent?")]
+        pub cp_cps_same_as_parent: String,
+
+        #[serde(rename = "Certificate Practice & Policy Statement")]
+        pub certificate_practice_policy_statement: String,
 
         #[serde(rename = "CP/CPS Last Updated Date")]
         pub cp_cps_last_updated_date: String,
@@ -212,48 +305,6 @@ pub mod all_cert_records {
         #[serde(rename = "Test Website URL - Revoked")]
         pub test_website_url_revoked: String,
 
-        #[serde(rename = "Technically Constrained")]
-        pub technically_constrained: String,
-
-        #[serde(rename = "Subordinate CA Owner")]
-        pub subordinate_ca_owner: String,
-
-        #[serde(rename = "Full CRL Issued By This CA")]
-        pub full_crl_issued_by_this_ca: String,
-
-        #[serde(rename = "JSON Array of Partitioned CRLs")]
-        pub json_array_of_partitioned_crls: String,
-
-        #[serde(rename = "Valid From (GMT)")]
-        pub valid_from_gmt: String,
-
-        #[serde(rename = "Valid To (GMT)")]
-        pub valid_to_gmt: String,
-
-        #[serde(rename = "Derived Trust Bits")]
-        pub derived_trust_bits: String,
-
-        #[serde(rename = "Chrome Status")]
-        pub chrome_status: String,
-
-        #[serde(rename = "Microsoft Status")]
-        pub microsoft_status: String,
-
-        #[serde(rename = "Mozilla Status")]
-        pub mozilla_status: String,
-
-        #[serde(rename = "Status of Root Cert")]
-        pub status_of_root_cert: String,
-
-        #[serde(rename = "Authority Key Identifier")]
-        pub authority_key_identifier: String,
-
-        #[serde(rename = "Subject Key Identifier")]
-        pub subject_key_identifier: String,
-
-        #[serde(rename = "Country")]
-        pub country: String,
-
         #[serde(rename = "TLS Capable")]
         pub tls_capable: String,
 
@@ -266,20 +317,8 @@ pub mod all_cert_records {
         #[serde(rename = "S/MIME Capable")]
         pub smime_capable: String,
 
-        #[serde(rename = "CP Same as Parent?")]
-        pub cp_same_as_parent: String,
-
-        #[serde(rename = "CP Last Update Date")]
-        pub cp_last_update_date: String,
-
-        #[serde(rename = "CPS Same as Parent?")]
-        pub cps_same_as_parent: String,
-
-        #[serde(rename = "CPS Last Update Date")]
-        pub cps_last_update_date: String,
-
-        #[serde(rename = "Certificate Practice & Policy Statement")]
-        pub certificate_practice_policy_statement: String,
+        #[serde(rename = "Country")]
+        pub country: String,
     }
 
     /// Read the provided CSV data, producing an iterator of [`CertificateMetadata`] parse results
@@ -392,6 +431,10 @@ pub mod mozilla_included_roots {
         #[serde(rename = "Certification Practice Statement (CPS)")]
         pub certificate_practice_statement_cps: String,
 
+        // TODO(XXX): leading space? SIC?
+        #[serde(rename = " Certificate Practice & Policy Statement (CP/CPS)")]
+        pub certificate_practice_and_policy_statement: String,
+
         #[serde(rename = "Standard Audit")]
         pub standard_audit: String,
 
@@ -472,6 +515,7 @@ mod tests {
             geographic_focus: "Global".to_string(),
             certificate_policy_cp: "https://letsencrypt.org/documents/isrg-cp-v3.4/; https://letsencrypt.org/documents/isrg-cp-v3.3/; https://letsencrypt.org/documents/isrg-cp-v3.1/; https://letsencrypt.org/documents/isrg-cp-v2.7/; https://letsencrypt.org/documents/isrg-cp-v2.6/; https://letsencrypt.org/documents/isrg-cp-v2.5/; https://letsencrypt.org/documents/isrg-cp-v2.4/".to_string(),
             certificate_practice_statement_cps: "https://letsencrypt.org/documents/isrg-cps-v4.5/; https://letsencrypt.org/documents/isrg-cps-v4.4/; https://letsencrypt.org/documents/isrg-cps-v4.3/; https://letsencrypt.org/documents/isrg-cps-v4.1/; https://letsencrypt.org/documents/isrg-cps-v3.3/; https://letsencrypt.org/documents/isrg-cps-v3.1/; https://letsencrypt.org/documents/isrg-cps-v3.0/; https://letsencrypt.org/documents/isrg-cps-v2.9/; https://letsencrypt.org/documents/isrg-cps-v2.7/".to_string(),
+            certificate_practice_and_policy_statement: "".to_string(),
             standard_audit: "https://www.cpacanada.ca/generichandlers/CPACHandler.ashx?attachmentid=cd221a0a-aa3c-49a9-bd8a-ad336588075a".to_string(),
             br_audit: "https://www.cpacanada.ca/generichandlers/CPACHandler.ashx?attachmentid=7f5e9f87-ecfd-4120-ae6f-e136e8637a4b".to_string(),
             ev_audit: "".to_string(),
@@ -504,6 +548,7 @@ mod tests {
             parent_salesforce_record_id: "001o000000HshFQAAZ".to_string(),
             parent_certificate_name: "QuoVadis Root CA 1 G3".to_string(),
             certificate_record_type: "Intermediate Certificate".to_string(),
+            subordinate_ca_owner: "".to_string(),
             revocation_status: "Not Revoked".to_string(),
             sha256_fingerprint: "C0EE0CCED463096DF07D27257AF79C986FF92B678F669C109FFF570F32AB433F"
                 .to_string(),
@@ -536,6 +581,17 @@ mod tests {
             code_signing_audit_statement_date: "".to_string(),
             code_signing_audit_period_start_date: "".to_string(),
             code_signing_audit_period_end_date: "".to_string(),
+            smime_br_audit_url: "".to_string(),
+            smime_br_audit_type: "".to_string(),
+            smime_br_audit_statement_date: "".to_string(),
+            smime_br_audit_period_start_date: "".to_string(),
+            smime_br_audit_period_end_date: "".to_string(),
+            vmc_audit_url: "".to_string(),
+            vmc_audit_type: "".to_string(),
+            vmc_audit_statement_date: "".to_string(),
+            vmc_udit_period_start_date: "".to_string(),
+            vmc_audit_period_end_date: "".to_string(),
+            policy_documentation: "".to_string(),
             cp_cps_same_as_parent: "true".to_string(),
             certificate_policy_url: "".to_string(),
             certificate_practice_statement_cps_url: "".to_string(),
@@ -546,7 +602,6 @@ mod tests {
             technically_constrained: "false".to_string(),
             mozilla_status: "Provided by CA".to_string(),
             microsoft_status: "Not Included".to_string(),
-            subordinate_ca_owner: "".to_string(),
             full_crl_issued_by_this_ca: "".to_string(),
             json_array_of_partitioned_crls: "[\"http://crl.digicert.eu/DigiCertQuoVadisG3QualifiedBEitsmeRSA4096SHA2562023CA1.crl\"]".to_string(),
             valid_from_gmt: "2023.03.14".to_string(),
@@ -566,6 +621,8 @@ mod tests {
             cps_same_as_parent: "true".to_string(),
             cps_last_update_date: "".to_string(),
             certificate_practice_policy_statement: "".to_string(),
+            apple_status: "Not Included".to_string(),
+            ca_document_repository: "".to_string(),
         };
 
         assert_eq!(records.first().unwrap(), &expected);
