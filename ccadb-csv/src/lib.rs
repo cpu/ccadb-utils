@@ -431,8 +431,7 @@ pub mod mozilla_included_roots {
         #[serde(rename = "Certification Practice Statement (CPS)")]
         pub certificate_practice_statement_cps: String,
 
-        // TODO(XXX): leading space? SIC?
-        #[serde(rename = " Certificate Practice & Policy Statement (CP/CPS)")]
+        #[serde(rename = "Certificate Practice & Policy Statement (CP/CPS)")]
         pub certificate_practice_and_policy_statement: String,
 
         #[serde(rename = "Standard Audit")]
