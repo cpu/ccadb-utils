@@ -437,13 +437,19 @@ pub mod mozilla_included_roots {
         #[serde(rename = "Standard Audit")]
         pub standard_audit: String,
 
-        #[serde(rename = "BR Audit")]
-        pub br_audit: String,
+        #[serde(rename = "NetSec Audit")]
+        pub netsec_audit: String,
 
-        #[serde(rename = "EV Audit")]
-        pub ev_audit: String,
+        #[serde(rename = "TLS BR Audit")]
+        pub tls_br_audit: String,
 
-        #[serde(rename = "Auditor")]
+        #[serde(rename = "TLS EVG Audit")]
+        pub tls_evg_audit: String,
+
+        #[serde(rename = "S/MIME BR Audit")]
+        pub smime_br_audit: String,
+
+        #[serde(rename = "Audit Firm")]
         pub auditor: String,
 
         #[serde(rename = "Standard Audit Type")]
@@ -512,16 +518,18 @@ mod tests {
             mozilla_applied_constraints: "".to_string(),
             company_website: "https://letsencrypt.org/".to_string(),
             geographic_focus: "Global".to_string(),
-            certificate_policy_cp: "https://letsencrypt.org/documents/isrg-cp-v3.4/; https://letsencrypt.org/documents/isrg-cp-v3.3/; https://letsencrypt.org/documents/isrg-cp-v3.1/; https://letsencrypt.org/documents/isrg-cp-v2.7/; https://letsencrypt.org/documents/isrg-cp-v2.6/; https://letsencrypt.org/documents/isrg-cp-v2.5/; https://letsencrypt.org/documents/isrg-cp-v2.4/".to_string(),
-            certificate_practice_statement_cps: "https://letsencrypt.org/documents/isrg-cps-v4.5/; https://letsencrypt.org/documents/isrg-cps-v4.4/; https://letsencrypt.org/documents/isrg-cps-v4.3/; https://letsencrypt.org/documents/isrg-cps-v4.1/; https://letsencrypt.org/documents/isrg-cps-v3.3/; https://letsencrypt.org/documents/isrg-cps-v3.1/; https://letsencrypt.org/documents/isrg-cps-v3.0/; https://letsencrypt.org/documents/isrg-cps-v2.9/; https://letsencrypt.org/documents/isrg-cps-v2.7/".to_string(),
-            certificate_practice_and_policy_statement: "".to_string(),
-            standard_audit: "https://www.cpacanada.ca/generichandlers/CPACHandler.ashx?attachmentid=cd221a0a-aa3c-49a9-bd8a-ad336588075a".to_string(),
-            br_audit: "https://www.cpacanada.ca/generichandlers/CPACHandler.ashx?attachmentid=7f5e9f87-ecfd-4120-ae6f-e136e8637a4b".to_string(),
-            ev_audit: "".to_string(),
+            certificate_policy_cp: "".to_string(),
+            certificate_practice_statement_cps: "".to_string(),
+            certificate_practice_and_policy_statement: "https://letsencrypt.org/documents/isrg-cp-cps-v5.7/index.html".to_string(),
+            standard_audit: "https://www.cpacanada.ca/api/getPDFWebTrust?attachmentId=f9b20fec-0378-41b0-920d-6080a707e545".to_string(),
+            netsec_audit: "https://www.cpacanada.ca/api/getPDFWebTrust?attachmentId=137241c2-c9e1-4c2f-b529-86f3a0f12dab".to_string(),
+            tls_br_audit: "https://www.cpacanada.ca/api/getPDFWebTrust?attachmentId=137241c2-c9e1-4c2f-b529-86f3a0f12dab".to_string(),
+            tls_evg_audit: "".to_string(),
+            smime_br_audit: "".to_string(),
             auditor: "Schellman & Company, LLC.".to_string(),
             standard_audit_type: "WebTrust".to_string(),
-            standard_audit_statement_dt: "2022.11.08".to_string(),
-            pem_info: "'-----BEGIN CERTIFICATE-----\r\nMIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\r\nTzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh\r\ncmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4\r\nWhcNMzUwNjA0MTEwNDM4WjBPMQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJu\r\nZXQgU2VjdXJpdHkgUmVzZWFyY2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBY\r\nMTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAK3oJHP0FDfzm54rVygc\r\nh77ct984kIxuPOZXoHj3dcKi/vVqbvYATyjb3miGbESTtrFj/RQSa78f0uoxmyF+\r\n0TM8ukj13Xnfs7j/EvEhmkvBioZxaUpmZmyPfjxwv60pIgbz5MDmgK7iS4+3mX6U\r\nA5/TR5d8mUgjU+g4rk8Kb4Mu0UlXjIB0ttov0DiNewNwIRt18jA8+o+u3dpjq+sW\r\nT8KOEUt+zwvo/7V3LvSye0rgTBIlDHCNAymg4VMk7BPZ7hm/ELNKjD+Jo2FR3qyH\r\nB5T0Y3HsLuJvW5iB4YlcNHlsdu87kGJ55tukmi8mxdAQ4Q7e2RCOFvu396j3x+UC\r\nB5iPNgiV5+I3lg02dZ77DnKxHZu8A/lJBdiB3QW0KtZB6awBdpUKD9jf1b0SHzUv\r\nKBds0pjBqAlkd25HN7rOrFleaJ1/ctaJxQZBKT5ZPt0m9STJEadao0xAH0ahmbWn\r\nOlFuhjuefXKnEgV4We0+UXgVCwOPjdAvBbI+e0ocS3MFEvzG6uBQE3xDk3SzynTn\r\njh8BCNAw1FtxNrQHusEwMFxIt4I7mKZ9YIqioymCzLq9gwQbooMDQaHWBfEbwrbw\r\nqHyGO0aoSCqI3Haadr8faqU9GY/rOPNk3sgrDQoo//fb4hVC1CLQJ13hef4Y53CI\r\nrU7m2Ys6xt0nUW7/vGT1M0NPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNV\r\nHRMBAf8EBTADAQH/MB0GA1UdDgQWBBR5tFnme7bl5AFzgAiIyBpY9umbbjANBgkq\r\nhkiG9w0BAQsFAAOCAgEAVR9YqbyyqFDQDLHYGmkgJykIrGF1XIpu+ILlaS/V9lZL\r\nubhzEFnTIZd+50xx+7LSYK05qAvqFyFWhfFQDlnrzuBZ6brJFe+GnY+EgPbk6ZGQ\r\n3BebYhtF8GaV0nxvwuo77x/Py9auJ/GpsMiu/X1+mvoiBOv/2X/qkSsisRcOj/KK\r\nNFtY2PwByVS5uCbMiogziUwthDyC3+6WVwW6LLv3xLfHTjuCvjHIInNzktHCgKQ5\r\nORAzI4JMPJ+GslWYHb4phowim57iaztXOoJwTdwJx4nLCgdNbOhdjsnvzqvHu7Ur\r\nTkXWStAmzOVyyghqpZXjFaH3pO3JLF+l+/+sKAIuvtd7u+Nxe5AW0wdeRlN8NwdC\r\njNPElpzVmbUq4JUagEiuTDkHzsxHpFKVK7q4+63SM1N95R1NbdWhscdCb+ZAJzVc\r\noyi3B43njTOQ5yOf+1CceWxG1bQVs5ZufpsMljq4Ui0/1lvh+wjChP4kqKOJ2qxq\r\n4RgqsahDYVvTH9w7jXbyLeiNdd8XM2w9U/t7y0Ff/9yi0GE44Za4rF2LN9d11TPA\r\nmRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d\r\nemyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=\r\n-----END CERTIFICATE-----'".to_string(),
+            standard_audit_statement_dt: "2024.11.20".to_string(),
+            pem_info: "'-----BEGIN CERTIFICATE-----\r\r\n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\r\r\n-----END CERTIFICATE-----'".to_string()
         };
 
         assert_eq!(records.first().unwrap(), &expected)
