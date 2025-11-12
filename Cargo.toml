@@ -9,7 +9,7 @@ resolver = "2"
 [workspace.dependencies]
 csv = "1"
 futures-util = "0.3"
-indicatif = "0.17"
+indicatif = "0.18"
 reqwest = { version = "0.12", default-features = false }
 rustls = { version = "0.23", default-features = false, features = ["std", "logging", "tls12"] }
 rustls-webpki = "0.102"
